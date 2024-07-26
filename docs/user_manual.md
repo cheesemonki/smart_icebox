@@ -4,7 +4,7 @@
 
 ### 1.1 产品概述
 
-智能冰箱控制器是一款集成了图像采集、温湿度监测、远程控制等功能的智能家居设备。通过 ESP32-CAM 开发板、Air780E 模块等硬件，实现对冰箱内部环境的实时监控和管理。
+智能冰箱控制器是一款集成了图像采集、温湿度监测、远程控制等功能的智能家居设备。通过 ESP32-CAM 开发板、Air780E 模块等硬件，实现对冰箱内部环境的实时监控和管理。本产品采用先进的图像识别技术，能够自动识别冰箱内物品，提供智能化的存储建议。
 
 ### 1.2 硬件组成
 
@@ -17,27 +17,38 @@
 ### 1.3 软件环境
 
 - **操作系统**：MicroPython
-- **开发环境**：Thonny（推荐）,Vscode
-- **网络协议**：MQTT、HTTP
+- **开发环境**：Thonny（推荐）、Vscode
+- **网络协议**：MQTT、HTTP、TCP/IP
 
 ## 2. 安装与配置
 
 ### 2.1 硬件连接
 
-[插入清晰的电路图，标注各组件的连接方式]
+#### ESP32-CAM 与 Air780E 连接:
+- **GPIO**: 将 ESP32-CAM 的 UART TX 连接到 Air780E 的 RX（引脚编号：RXD），UART RX 连接到 Air780E 的 TX（引脚编号：TXD）。
+- **电源**: ESP32-CAM 的 VCC 连接到 3.3V，GND 连接到 GND。
+- **其他连接**: SPI 接口用于摄像头数据传输，具体引脚如下：
+    - SCK -> GPIO14
+    - MISO -> GPIO12
+    - MOSI -> GPIO13
+    - CS -> GPIO15
+    - RES -> GPIO4
+    - XCLK -> GPIO0
 
-- **ESP32-CAM 与 Air780E 连接**:
-  - GPIO: 将 ESP32-CAM 的 UART TX 连接到 Air780E 的 RX，UART RX 连接到 Air780E 的 TX。
-  - 电源: ...
-  - 其他连接: ...
+#### AHT10 温湿度传感器连接:
+- **SCL**: 连接到 ESP32-CAM 的 GPIO22
+- **SDA**: 连接到 ESP32-CAM 的 GPIO21
+- **VCC**: 连接到 3.3V
+- **GND**: 连接到 GND
 
 ### 2.2 软件安装
 
-- **安装 Thonny**：从 [Thonny官方网站](https://thonny.org) 下载并安装。
-- **安装 MicroPython 固件**：按照 ESP32-CAM 开发板的说明，将 MicroPython 固件烧录到开发板中。
-- **安装库**：
-  ```bash
-  pip install umqtt.simple requests
+- **安装 Thonny**: 从 [Thonny官方网站](https://thonny.org) 下载并安装。
+- **安装 MicroPython 固件**: 按照 ESP32-CAM 开发板的官方说明，使用 esptool.py 工具将 MicroPython 固件烧录到开发板中。
+```bash
+  pip install umqtt.simple requests adafruit-circuitpython-ahtx0
+  ```
+  
 ### 2.3 配置网络
 
 - 连接到设备的 Wi-Fi 热点。
