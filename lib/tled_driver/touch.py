@@ -1,6 +1,6 @@
 from lib.tled_driver.ili9341 import Display, color565
 from lib.tled_driver.xpt2046 import Touch
-from machine import Pin, SPI, idle
+from machine import Pin, SoftSPI, idle
 from lib.tled_driver.TLedCfg import TLedConfig
 from time import sleep
 from lib.aht10_drivers.aht10 import  dht11_humidity, dht11_temperature
@@ -81,9 +81,10 @@ def TouchTest():
     ledCfg = TLedConfig()
     power = Pin(ledCfg.LED, Pin.OUT)
     power.value(1)
+
+    spi1 = SoftSPI(baudrate=32000000, polarity=1, phase=0, sck=Pin(ledCfg.SCK), mosi=Pin(ledCfg.SDI), miso=Pin(4))
+    spi2 = SoftSPI(baudrate=1000000, polarity=1, phase=0, sck=Pin(ledCfg.T_CLK), mosi=Pin(ledCfg.T_DIN), miso=Pin(4))
     
-    spi1 = SPI(2, baudrate=32000000, sck=Pin(ledCfg.SCK), mosi=Pin(ledCfg.SDI))
-    spi2 = SPI(1, baudrate=1000000, sck=Pin(ledCfg.T_CLK), mosi=Pin(ledCfg.T_DIN))
     display = Display(spi1, dc=Pin(ledCfg.DC), cs=Pin(ledCfg.CS), rst=Pin(ledCfg.RESET))
 
     demo = Demo(display, spi2)
