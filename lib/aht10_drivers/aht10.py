@@ -42,5 +42,4 @@ sensor_ctrl = SensorController()
 temp = sensor_ctrl.read_temperature()
 humid = sensor_ctrl.read_humidity()
 
-# 假设我们想在这里做些什么 with the readings...
-print(f"Temperature: {temp} °C, Humidity: {humid}%")
+# print(f"Temperature: {temp} °C, Humidity: {humid}%")
