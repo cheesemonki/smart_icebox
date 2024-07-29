@@ -60,14 +60,17 @@ def capture_and_upload():
     try:
         img = cam.capture()
         img_data = img.to_bytes(format="jpeg")
+        upload_to_obs(img_data)
     except Exception as e:
         print(f"捕获图像失败: {e}")
         return
+    finally:
+        # 在finally块中确保摄像头资源被释放
+        cam.deinit()
 
-    # 上传到OBS
-    upload_to_obs(img_data)
-
-# 注意：在长时间运行的应用中，确保在不需要摄像头时释放资源
+# 注意：如果你想在更长时间的运行中保持摄像头资源的可用性，你可以在这里重新初始化摄像头
+# cam.init()
+    
 # 例如：
 # cam.deinit()
 # del cam
