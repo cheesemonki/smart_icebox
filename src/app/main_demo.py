@@ -1,6 +1,3 @@
-#machine库，camera库需要下载到固件
-#链接：https://pan.baidu.com/s/1FtwZfstPkn4Rsm9sRaQlIg 提取码: q1gg
-
 
 from lib.lcd_drivers.lcd import lcd_test
 from lib.tled_driver.touch import TouchTest
@@ -38,23 +35,40 @@ def lcd_thread():
 def uart_thread():
     read_from_4Guart()
 
-
 # 配置选项
 # IS_USE_LCD = 1  # 或者从配置文件或环境变量读取
 
+class ThreadManager:
+    def __init__(self):
+        self.threads = []
+
+    def start_threads(self):
+        for name, thread_func in threads:
+            _thread.start_new_thread(thread_func, ())
+
+    def stop_threads(self):
+        # 停止所有线程的逻辑
+        for thread in self.threads:
+            thread.stop()
+
+    def add_thread(self, name, thread_func):
+        thread = _thread.start_new_thread(thread_func, ())
+        self.threads.append((name, thread))
+
+
 def main():
-    threads = []
+    thread_manager = ThreadManager()
 
     if IS_USE_LCD == 2:
-        threads.append(('TouchThread', touch_thread))
+        thread_manager.add_thread('TouchThread', touch_thread)
     elif IS_USE_LCD == 1:
-        threads.extend([('LCDThread', lcd_thread), ('StreamThread', stream_thread)])
+        thread_manager.add_thread('LCDThread', lcd_thread)
+        thread_manager.add_thread('StreamThread', stream_thread)
 
     # 新增 UART 线程
-    threads.append(('UARTThread', uart_thread))
+    thread_manager.add_thread('UARTThread', uart_thread)
     
-    for name, thread_func in threads:
-        _thread.start_new_thread(thread_func, ())
+    thread_manager.start_threads()
 
     while True:
         time.sleep(1)
