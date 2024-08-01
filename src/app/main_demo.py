@@ -1,15 +1,14 @@
-
-from lib.lcd_drivers.lcd import lcd_test
-from lib.tled_driver.touch import TouchTest
-from lib.camera_driver.tocloud import capture_and_upload
-from lib.air780e_drivers._4g_uart import read_from_4Guart
-import _thread
+from threading import Thread
 import time
 import json
+from lib.camera_driver.Picamera2_Img_et import capture_and_upload, getImg, save_image
+from lib.air780e_drivers._4g_uart import read_from_4Guart
 
 with open('../config/config.json') as f:
     config = json.load(f)
 IS_USE_LCD = config.get('IS_USE_LCD', 1)
+
+
 
 def safe_thread_function(func, name):
     def wrapper(*args, **kwargs):
@@ -35,26 +34,31 @@ def lcd_thread():
 def uart_thread():
     read_from_4Guart()
 
-# 配置选项
-# IS_USE_LCD = 1  # 或者从配置文件或环境变量读取
-
 class ThreadManager:
     def __init__(self):
         self.threads = []
 
     def start_threads(self):
-        for name, thread_func in threads:
-            _thread.start_new_thread(thread_func, ())
+        for thread in self.threads:
+            thread.start()
 
     def stop_threads(self):
-        # 停止所有线程的逻辑
-        for thread in self.threads:
-            thread.stop()
+        pass
 
     def add_thread(self, name, thread_func):
-        thread = _thread.start_new_thread(thread_func, ())
-        self.threads.append((name, thread))
+        thread = Thread(target=thread_func, name=name)
+        self.threads.append(thread)
 
+    def add_capture_thread(self, interval=60):
+        """Start a thread to capture and save images every `interval` seconds."""
+        def capture_and_save_image(interval):
+            while True:
+                frame = getImg()
+                timestamp = time.strftime("%Y%m%d-%H%M%S")
+                filename = f'image_{timestamp}.jpg'
+                save_image(frame, filename)
+                time.sleep(interval)
+        self.add_thread('CaptureThread', lambda: capture_and_save_image(interval))
 
 def main():
     thread_manager = ThreadManager()
@@ -65,8 +69,10 @@ def main():
         thread_manager.add_thread('LCDThread', lcd_thread)
         thread_manager.add_thread('StreamThread', stream_thread)
 
-    # 新增 UART 线程
     thread_manager.add_thread('UARTThread', uart_thread)
+    
+    # Add the image capture thread with an interval of 60 seconds
+    thread_manager.add_capture_thread(interval=60)
     
     thread_manager.start_threads()
 

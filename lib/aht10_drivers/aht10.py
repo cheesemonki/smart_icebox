@@ -1,11 +1,13 @@
-from machine import SoftI2C, Pin
+import smbus
+import time
+
 from aht10_driver import AHT10
 
 class SensorController:
-    def __init__(self, scl_pin=5, sda_pin=4, freq=100000):
-        # 允许通过参数配置I2C引脚和频率
-        self.i2c = SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin), freq=freq)
-        self.sensor = AHT10(self.i2c)
+    def __init__(self, bus_num=1, address=AHT10_ADDR):
+        # 允许通过参数配置I2C总线号和设备地址
+        self.i2c = smbus.SMBus(bus_num)
+        self.sensor = AHT10(self.i2c, address)
         self.initialize_sensor()
 
     def initialize_sensor(self):
@@ -42,4 +44,4 @@ sensor_ctrl = SensorController()
 temp = sensor_ctrl.read_temperature()
 humid = sensor_ctrl.read_humidity()
 
-# print(f"Temperature: {temp} °C, Humidity: {humid}%")
+print(f"Temperature: {temp} °C, Humidity: {humid}%")
