@@ -4,6 +4,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from obs import ObsClient, PutObjectHeader
 
+
 class Watcher:
     DIRECTORY_TO_WATCH = "/path/to/your/directory"
     obs_client = None
@@ -19,9 +20,7 @@ class Watcher:
         # 初始化 ObsClient 一次
         if not Watcher.obs_client:
             Watcher.obs_client = ObsClient(
-                access_key_id=self.ak,
-                secret_access_key=self.sk,
-                server=self.server
+                access_key_id=self.ak, secret_access_key=self.sk, server=self.server
             )
 
     def run(self):
@@ -48,7 +47,7 @@ class Handler(FileSystemEventHandler):
         if event.is_directory:
             return None
 
-        elif event.event_type == 'created':
+        elif event.event_type == "created":
             # 文件被创建
             print(f"{event.src_path} has been created!")
             # 上传文件到OBS
@@ -58,23 +57,31 @@ class Handler(FileSystemEventHandler):
         if Watcher.obs_client:
             object_key = os.path.basename(file_path)
             headers = PutObjectHeader()
-            headers.contentType = 'image/jpeg'  # 根据文件类型设置MIME类型
-            metadata = {'meta1': 'value1', 'meta2': 'value2'}  # 自定义元数据
+            headers.contentType = "image/jpeg"  # 根据文件类型设置MIME类型
+            metadata = {"meta1": "value1", "meta2": "value2"}  # 自定义元数据
 
             try:
-                resp = Watcher.obs_client.putFile(Watcher.obs_client.bucket_name, object_key, file_path, metadata, headers)
+                resp = Watcher.obs_client.putFile(
+                    Watcher.obs_client.bucket_name,
+                    object_key,
+                    file_path,
+                    metadata,
+                    headers,
+                )
                 if resp.status < 300:
                     print(f"Upload of {file_path} to OBS succeeded.")
-                    print('Request ID:', resp.requestId)
-                    print('ETag:', resp.body.etag)
-                    print('Version ID:', resp.body.versionId)
-                    print('Storage Class:', resp.body.storageClass)
+                    print("Request ID:", resp.requestId)
+                    print("ETag:", resp.body.etag)
+                    print("Version ID:", resp.body.versionId)
+                    print("Storage Class:", resp.body.storageClass)
                 else:
-                    print(f"Upload of {file_path} to OBS failed: {resp.errorCode} - {resp.errorMessage}")
+                    print(
+                        f"Upload of {file_path} to OBS failed: {resp.errorCode} - {resp.errorMessage}"
+                    )
             except Exception as e:
                 print(f"An error occurred while uploading {file_path}: {str(e)}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     w = Watcher()
     w.run()
