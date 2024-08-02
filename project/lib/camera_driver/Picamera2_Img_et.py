@@ -1,6 +1,4 @@
-from picamera2 import Picamera2
-from libcamera import controls
-from PIL import Image
+ 
 
 class Imget:
     def __init__(self):
