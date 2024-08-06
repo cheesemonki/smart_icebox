@@ -9,10 +9,8 @@ from huaweicloudsdkimage.v2.region.image_region import ImageRegion
 
 if __name__ == "__main__":
     # 从环境变量中获取AK和SK
-    # ak = os.getenv["GBPLAMSYPUIDMYEM653J"]
-    # sk = os.getenv["HmscL5gAkm60iuXNFwqaPDENMvvBy2wkPlFQ1jZ6"]
-    ak = "GBPLAMSYPUIDMYEM653J"
-    sk = "HmscL5gAkm60iuXNFwqaPDENMvvBy2wkPlFQ1jZ6"
+    
+    
 
 
     # 创建认证对象
