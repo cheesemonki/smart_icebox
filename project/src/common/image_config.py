@@ -1,4 +1,5 @@
 # coding: utf-8
+import requests
 
 import base64
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
@@ -9,8 +10,10 @@ from huaweicloudsdkimage.v2.region.image_region import ImageRegion
 
 if __name__ == "__main__":
     # 从环境变量中获取AK和SK
-    
-    
+    # ak = os.getenv["GBPLAMSYPUIDMYEM653J"]
+    # sk = os.getenv["HmscL5gAkm60iuXNFwqaPDENMvvBy2wkPlFQ1jZ6"]
+    ak = "GBPLAMSYPUIDMYEM653J"
+    sk = "HmscL5gAkm60iuXNFwqaPDENMvvBy2wkPlFQ1jZ6"
 
 
     # 创建认证对象
@@ -51,6 +54,18 @@ if __name__ == "__main__":
         # 发送请求
         response = client.run_image_tagging(request)
         print(response)
+        response_json = response.to_json_object()  # 将响应转换为JSON对象
+
+        # 准备要发送的GET请求的URL和参数
+        target_url = "http://example.com/your-endpoint"  # 替换为实际的URL
+        params = response_json  # 将响应JSON作为查询参数
+
+        # 发送GET请求
+        result = requests.get(target_url, params=params)
+
+        # 打印结果
+        print(result.text)
+
     except exceptions.ClientRequestException as e:
         print("Status Code:", e.status_code)
         print("Request ID:", e.request_id)
