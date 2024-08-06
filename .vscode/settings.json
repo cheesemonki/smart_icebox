@@ -1,0 +1,40 @@
+{
+  // 配置 Python 扩展的按钮
+  "python.testExecution.enableRunFromSourceFileCommand": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+
+  "python.testing.pytestArgs": ["."],
+
+  "python.testing.runTestOnFileSave": true, // 保存文件时自动运行测试
+
+  // 自定义按钮
+  "workbench.action.showCommands": [
+    {
+      "text": "▶",
+      "tooltip": "运行测试",
+      "alignment": "left",
+      "command": "workbench.action.tasks.runTestTask",
+      "priority": 3.5
+    }
+],
+"MicroPython.executeButton": [
+      {
+            "text": "▶",
+            "tooltip": "运行",
+            "alignment": "left",
+            "command": "extension.executeFile",
+            "priority": 3.5
+      }
+],
+"MicroPython.syncButton": [
+      {
+            "text": "$(sync)",
+            "tooltip": "同步",
+            "alignment": "left",
+            "command": "extension.execute",
+            "priority": 4
+      }
+]
+}
