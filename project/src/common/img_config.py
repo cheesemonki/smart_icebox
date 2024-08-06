@@ -47,6 +47,12 @@ def image_tagging(token, base64_image):
     response = requests.post(url, json=body, headers=headers)
     return response.json()
 
+# 从本地文件读取图像数据
+def get_local_image_data(image_path):
+    with open(image_path, 'rb') as file:
+        image_data = file.read()
+    return base64.b64encode(image_data).decode("utf-8")
+
 # 主程序
 def main():
     username = "your_username"
@@ -59,11 +65,14 @@ def main():
     # 获取Token
     token = get_token(username, password, domainname, project_name)
     
-    # 获取图像数据
+    # 获取obs图像数据并进行图像编码（暂时不使用obs文件读取）
     image_data = get_object_data(token, bucket_name, object_name)
-    
-    # 图像编码
     base64_image = base64.b64encode(image_data).decode("utf-8")
+
+    # 读取本地图像数据并转换为base64
+    base64_image = get_local_image_data(local_image_path)
+    
+    
     
     # 获取图像标签
     result = image_tagging(token, base64_image)
