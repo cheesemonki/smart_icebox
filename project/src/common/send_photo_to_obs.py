@@ -85,6 +85,19 @@ class CameraToCloud:
         file_path = self.capture_and_save()
         self.upload_to_obs(file_path)
 
+    # 获取对象数据
+def get_object_data(token, bucket_name, object_name):
+    url = f"https://{bucket_name}.obs.cn-north-4.myhuaweicloud.com/{object_name}"
+    headers = {
+        "Authorization": f"OBS {token}",
+        "Date": "current_date"  # 替换为当前日期
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.content
+    else:
+        raise Exception(f"Failed to get object data: {response.status_code}")
+
     def __del__(self):
         if self.obs_client:
             self.obs_client.close()
